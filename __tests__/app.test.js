@@ -32,5 +32,18 @@ describe("NC-Games app", () => {
           expect(categories).toHaveLength(4);
         });
     });
+    test("Responds with status 200 and an array of categories with length 4 and checks for correct properties.", () => {
+      return request(app)
+        .get("/api/categories")
+        .expect(200)
+        .then(({ body }) => {
+          const { categories } = body;
+          expect(categories).toHaveLength(4);
+          categories.forEach((category) => {
+            expect(category).toHaveProperty("slug");
+            expect(category).toHaveProperty("description");
+          });
+        });
+    });
   });
 });
