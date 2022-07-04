@@ -1,10 +1,10 @@
-const { getCategory } = require("./controllers/category-controller.js");
+const { getCategories } = require("./controllers/category-controller.js");
 const express = require("express");
 const app = express();
 
 app.use(express.json());
 
-app.get("/api/categories", getCategory);
+app.get("/api/categories", getCategories);
 
 app.use("*", (req, res) => {
   res.status(404).send({ msg: "Not found." });

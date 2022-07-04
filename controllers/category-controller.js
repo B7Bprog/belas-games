@@ -1,6 +1,6 @@
 const { requestCategory } = require("../models/category-model.js");
 
-exports.getCategory = (req, res, next) => {
+exports.getCategories = (req, res, next) => {
   requestCategory()
     .then((categories) => {
       console.log(categories);
