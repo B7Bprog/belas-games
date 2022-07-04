@@ -6,7 +6,7 @@ app.use(express.json());
 
 app.get("/api/categories", getCategory);
 
-app.get("*", (req, res) => {
+app.use("*", (req, res) => {
   res.status(404).send({ msg: "Not found." });
 });
 
