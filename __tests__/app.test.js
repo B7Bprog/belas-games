@@ -45,5 +45,13 @@ describe("NC-Games app", () => {
           });
         });
     });
+    test("Responds with status 404 'Not found.' .", () => {
+      return request(app)
+        .get("/api/WRONGPATH")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not found.");
+        });
+    });
   });
 });
