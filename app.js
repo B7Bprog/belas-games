@@ -14,12 +14,12 @@ app.use("*", (req, res) => {
 });
 
 app.use((err, req, res, next) => {
-  res.status(404).send(err);
-  next();
+  if (err.code === "22P02") {
+    return res.status(400).send({ msg: "Bad Request" });
+  } else return res.status(404).send(err);
 });
 app.use((err, req, res, next) => {
-  console.log(err);
-  res.status(500).send("Server Error! DEBUGGING");
+  res.status(500).send({ msg: "Internal Server Error" });
 });
 
 module.exports = app;

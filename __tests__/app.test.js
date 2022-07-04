@@ -46,28 +46,8 @@ describe("NC-Games app", () => {
     });
   });
   describe("GET /api/reviews/:review_id", () => {
-    test("Returns 200, responds with a single review.", () => {
+    test("Returns 200, responds with a single review object, which is not an array and has the right properties.", () => {
       //Arrange
-      const review_id = 2;
-      return request(app)
-        .get(`/api/reviews/${review_id}`)
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.review).toEqual({
-            review_id: review_id,
-            title: "Jenga",
-            designer: "Leslie Scott",
-            owner: "philippaclaire9",
-            review_img_url:
-              "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
-            review_body: "Fiddly fun for all the family",
-            category: "dexterity",
-            created_at: "2021-01-18T10:01:41.251Z",
-            votes: 5,
-          });
-        });
-    });
-    test("Responds with status 200 and a review object with the correct properties.", () => {
       const review_id = 2;
       return request(app)
         .get(`/api/reviews/${review_id}`)
@@ -83,9 +63,24 @@ describe("NC-Games app", () => {
           expect(review).toHaveProperty("category");
           expect(review).toHaveProperty("owner");
           expect(review).toHaveProperty("created_at");
+
+          expect(review).toEqual({
+            review_id: review_id,
+            title: "Jenga",
+            designer: "Leslie Scott",
+            owner: "philippaclaire9",
+            review_img_url:
+              "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+            review_body: "Fiddly fun for all the family",
+            category: "dexterity",
+            created_at: "2021-01-18T10:01:41.251Z",
+            votes: 5,
+          });
+
+          expect(Array.isArray(review)).toBe(false);
         });
     });
-    test("Responds with status 404 'Bad request', when passed the wrong id.", () => {
+    test("Responds with status 404 'Not found' and a custom error message, when passed the wrong id.", () => {
       const review_id = 9999;
       return request(app)
         .get(`/api/reviews/${review_id}`)
@@ -93,6 +88,16 @@ describe("NC-Games app", () => {
         .then(({ body }) => {
           const { msg } = body;
           expect(msg).toBe(`ID ${review_id} does not exist.`);
+        });
+    });
+    test("Responds with status 400 'Bad Request' when passed something that's not an ID.", () => {
+      const review_id = "h$nmP^";
+      return request(app)
+        .get(`/api/reviews/${review_id}`)
+        .expect(400)
+        .then(({ body }) => {
+          const { msg } = body;
+          expect(msg).toBe(`Bad Request`);
         });
     });
   });
