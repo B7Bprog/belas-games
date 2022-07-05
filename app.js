@@ -18,8 +18,10 @@ app.use("*", (req, res) => {
 });
 
 app.use((err, req, res, next) => {
-  if (err.hasOwnProperty("msg")) return res.status(404).send(err);
-  if (err.code === "22P02") {
+  console.log("error here: " + err);
+  if (err.hasOwnProperty("msg") && err.msg !== "Bad Request")
+    return res.status(404).send(err);
+  if (err.code === "22P02" || err.msg === "Bad Request") {
     return res.status(400).send({ msg: "Bad Request" });
   } else return res.status(404).send({ msg: "Not found." });
 });

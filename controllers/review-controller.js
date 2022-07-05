@@ -12,8 +12,10 @@ exports.getReviewByID = (req, res, next) => {
 };
 
 exports.patchReview = (req, res, next) => {
-  console.log("inside patchReview");
   const { review_id } = req.params;
+  if (!req.body.hasOwnProperty("inc_votes")) {
+    next({ msg: `Bad Request` });
+  }
   updateReview(review_id, req.body)
     .then((review) => {
       console.log("review: " + JSON.stringify(review.votes));
