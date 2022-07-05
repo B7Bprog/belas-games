@@ -150,7 +150,7 @@ describe("NC-Games app", () => {
           expect(msg).toBe(`Not found.`);
         });
     });
-    test("Responds with Status 404 'Not Found' when passed in the wrong property.", () => {
+    test("Responds with Status 404 'Not Found' when passed in invalid value.", () => {
       const incrementVotes = { inc_votes: "hello" };
       return request(app)
         .patch(`/api/reviews/${review_id}`)
