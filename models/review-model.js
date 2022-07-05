@@ -13,3 +13,22 @@ exports.selectReviewByID = (review_id) => {
       return result.rows[0];
     });
 };
+
+exports.updateReview = (review_id, body) => {
+  const { inc_votes } = body;
+  return connection
+    .query(
+      "UPDATE reviews SET votes = votes + $2 WHERE review_id=$1 RETURNING *;",
+      [review_id, inc_votes]
+    )
+    .then((result) => {
+      if (result.rowCount === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: `ID ${review_id} does not exist.`,
+        });
+      }
+      //result.rows[0].votes += inc_votes;
+      return result.rows[0];
+    });
+};

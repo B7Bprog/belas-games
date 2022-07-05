@@ -101,4 +101,65 @@ describe("NC-Games app", () => {
         });
     });
   });
+  describe(" PATCH /api/reviews/:review_id", () => {
+    const review_id = 3;
+    test("Status 200 responds with the updated review.", () => {
+      const incrementVotes = { inc_votes: 1 };
+
+      return request(app)
+        .patch(`/api/reviews/${review_id}`)
+        .send(incrementVotes)
+        .expect(200)
+        .then(({ body }) => {
+          console.log("in test in .then");
+          const { review } = body;
+          expect(review).toEqual({
+            review_id: 3,
+            title: "Ultimate Werewolf",
+            designer: "Akihisa Okui",
+            owner: "bainesface",
+            review_img_url:
+              "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+            review_body: "We couldn't find the werewolf!",
+            category: "social deduction",
+            created_at: "2021-01-18T10:01:41.251Z",
+            votes: 6,
+            //...updatedReview,
+          });
+        });
+    });
+    test("Responds with Status 404 'Not Found'.", () => {
+      const incrementVotes = { inc_votes: 1 };
+      return request(app)
+        .patch("/api/reviews/5555")
+        .send(incrementVotes)
+        .expect(404)
+        .then(({ body }) => {
+          const { msg } = body;
+          expect(msg).toBe(`ID 5555 does not exist.`);
+        });
+    });
+    test("Responds with Status 400 'Not Found' when passed in the wrong property.", () => {
+      const incrementVotes = { inc_SOMETHING: 1 };
+      return request(app)
+        .patch(`/api/reviews/${review_id}`)
+        .send(incrementVotes)
+        .expect(400)
+        .then(({ body }) => {
+          const { msg } = body;
+          expect(msg).toBe(`Bad Request`);
+        });
+    });
+    test("Responds with Status 400 'Bad Request' when passed in invalid value.", () => {
+      const incrementVotes = { inc_votes: "hello" };
+      return request(app)
+        .patch(`/api/reviews/${review_id}`)
+        .send(incrementVotes)
+        .expect(400)
+        .then(({ body }) => {
+          const { msg } = body;
+          expect(msg).toBe(`Bad Request`);
+        });
+    });
+  });
 });
