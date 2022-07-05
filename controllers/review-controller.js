@@ -16,6 +16,10 @@ exports.patchReview = (req, res, next) => {
   const { review_id } = req.params;
   updateReview(review_id, req.body)
     .then((review) => {
+      console.log("review: " + JSON.stringify(review.votes));
+      if (!review.votes) {
+        next();
+      }
       res.status(200).send({ review });
     })
     .catch(next);

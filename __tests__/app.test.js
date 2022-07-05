@@ -139,5 +139,16 @@ describe("NC-Games app", () => {
           expect(msg).toBe(`ID 5555 does not exist.`);
         });
     });
+    test("Responds with Status 404 'Not Found' when passed in the wrong property.", () => {
+      const incrementVotes = { inc_SOMETHING: 1 };
+      return request(app)
+        .patch(`/api/reviews/${review_id}`)
+        .send(incrementVotes)
+        .expect(404)
+        .then(({ body }) => {
+          const { msg } = body;
+          expect(msg).toBe(`Not found.`);
+        });
+    });
   });
 });
