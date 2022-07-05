@@ -20,6 +20,10 @@ exports.patchReview = (req, res, next) => {
       if (!review.votes) {
         next();
       }
+      console.log(typeof review.votes);
+      if (typeof review.votes !== "number") {
+        next();
+      }
       res.status(200).send({ review });
     })
     .catch(next);

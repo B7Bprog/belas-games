@@ -150,5 +150,16 @@ describe("NC-Games app", () => {
           expect(msg).toBe(`Not found.`);
         });
     });
+    test("Responds with Status 404 'Not Found' when passed in the wrong property.", () => {
+      const incrementVotes = { inc_votes: "hello" };
+      return request(app)
+        .patch(`/api/reviews/${review_id}`)
+        .send(incrementVotes)
+        .expect(404)
+        .then(({ body }) => {
+          const { msg } = body;
+          expect(msg).toBe(`Not found.`);
+        });
+    });
   });
 });
