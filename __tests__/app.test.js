@@ -113,7 +113,6 @@ describe("NC-Games app", () => {
         .send(incrementVotes)
         .expect(200)
         .then(({ body }) => {
-          console.log("in test in .then");
           const { review } = body;
           expect(review).toEqual({
             review_id: 3,
