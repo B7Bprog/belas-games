@@ -20,7 +20,6 @@ app.use("*", (req, res) => {
 });
 
 app.use((err, req, res, next) => {
-  console.log("error here: " + err);
   if (err.hasOwnProperty("msg") && err.msg !== "Bad Request")
     return res.status(404).send(err);
   if (err.code === "22P02" || err.msg === "Bad Request") {

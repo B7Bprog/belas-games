@@ -5,7 +5,6 @@ exports.getReviewByID = (req, res, next) => {
 
   selectReviewByID(review_id)
     .then((review) => {
-      // console.log({ review });
       res.status(200).send({ review });
     })
     .catch(next);
@@ -18,11 +17,9 @@ exports.patchReview = (req, res, next) => {
   }
   updateReview(review_id, req.body)
     .then((review) => {
-      console.log("review: " + JSON.stringify(review.votes));
       if (!review.votes) {
         next();
       }
-      console.log(typeof review.votes);
       if (typeof review.votes !== "number") {
         next();
       }

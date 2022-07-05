@@ -63,6 +63,7 @@ describe("NC-Games app", () => {
           expect(review).toHaveProperty("category");
           expect(review).toHaveProperty("owner");
           expect(review).toHaveProperty("created_at");
+          expect(review).toHaveProperty("comment_count");
 
           expect(review).toEqual({
             review_id: review_id,
@@ -75,6 +76,7 @@ describe("NC-Games app", () => {
             category: "dexterity",
             created_at: "2021-01-18T10:01:41.251Z",
             votes: 5,
+            comment_count: expect.any(String),
           });
 
           expect(Array.isArray(review)).toBe(false);
@@ -185,5 +187,41 @@ describe("NC-Games app", () => {
           expect(body.msg).toBe("Not found.");
         });
     });
+  });
+  describe("GET /api/reviews/:review_id (comment count)", () => {
+    test("Responds with status 200 and a review object containing comment-count.", () => {
+      const review_id = 2;
+      return request(app)
+        .get(`/api/reviews/${review_id}`)
+        .expect(200)
+        .then(({ body }) => {
+          const { review } = body;
+          expect(review).toHaveProperty("comment_count");
+        });
+    });
+    /////needs working on vvvvv
+    test("Responds with status 200 and a review object containing the right comment-count.", () => {
+      const review_id = 2;
+      return request(app)
+        .get(`/api/reviews/${review_id}`)
+        .expect(200)
+        .then(({ body }) => {
+          const { review } = body;
+          expect(review).toEqual({
+            review_id: 2,
+            title: "Jenga",
+            designer: "Leslie Scott",
+            owner: "philippaclaire9",
+            review_img_url:
+              "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+            review_body: "Fiddly fun for all the family",
+            category: "dexterity",
+            created_at: "2021-01-18T10:01:41.251Z",
+            votes: 5,
+            comment_count: "3",
+          });
+        });
+    });
+    //Errors are handled in the following 'Describe' block: GET /api/reviews/:review_id"
   });
 });
