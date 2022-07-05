@@ -1,5 +1,8 @@
 const { getCategories } = require("./controllers/category-controller");
-const { getReviewByID } = require("./controllers/review-controller");
+const {
+  getReviewByID,
+  patchReview,
+} = require("./controllers/review-controller");
 const express = require("express");
 const app = express();
 
@@ -7,6 +10,7 @@ app.use(express.json());
 
 app.get("/api/categories", getCategories);
 app.get("/api/reviews/:review_id", getReviewByID);
+app.patch("/api/reviews/:review_id", patchReview);
 
 app.use("*", (req, res) => {
   res.status(404).send({ msg: "Not found." });

@@ -120,6 +120,7 @@ describe("NC-Games app", () => {
         .send(incrementVotes)
         .expect(200)
         .then(({ body }) => {
+          console.log("in test in .then");
           const { review } = body;
           expect(review).toEqual({
             review_id: 3,
@@ -130,7 +131,7 @@ describe("NC-Games app", () => {
               "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
             review_body: "We couldn't find the werewolf!",
             category: "social deduction",
-            created_at: new Date(1610964101251),
+            created_at: "2021-01-18T10:01:41.251Z",
             votes: 6,
             //...updatedReview,
           });
