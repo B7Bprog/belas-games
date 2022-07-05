@@ -102,21 +102,12 @@ describe("NC-Games app", () => {
     });
   });
   describe(" PATCH /api/reviews/:review_id", () => {
+    const review_id = 3;
     test("Status 200 responds with the updated review.", () => {
       const incrementVotes = { inc_votes: 1 };
-      const updatedReview = {
-        title: "Ultimate Werewolf",
-        designer: "Akihisa Okui",
-        owner: "bainesface",
-        review_img_url:
-          "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
-        review_body: "We couldn't find the werewolf!",
-        category: "social deduction",
-        created_at: new Date(1610964101251),
-        votes: 5,
-      };
+
       return request(app)
-        .patch("/api/reviews/3")
+        .patch(`/api/reviews/${review_id}`)
         .send(incrementVotes)
         .expect(200)
         .then(({ body }) => {
@@ -135,6 +126,17 @@ describe("NC-Games app", () => {
             votes: 6,
             //...updatedReview,
           });
+        });
+    });
+    test("Responds with Status 404 'Not Found'.", () => {
+      const incrementVotes = { inc_votes: 1 };
+      return request(app)
+        .patch("/api/reviews/5555")
+        .send(incrementVotes)
+        .expect(404)
+        .then(({ body }) => {
+          const { msg } = body;
+          expect(msg).toBe(`ID 5555 does not exist.`);
         });
     });
   });
