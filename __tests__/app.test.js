@@ -101,4 +101,40 @@ describe("NC-Games app", () => {
         });
     });
   });
+  describe(" PATCH /api/reviews/:review_id", () => {
+    test("Status 200 responds with the updated review.", () => {
+      const incrementVotes = { inc_votes: 1 };
+      const updatedReview = {
+        title: "Ultimate Werewolf",
+        designer: "Akihisa Okui",
+        owner: "bainesface",
+        review_img_url:
+          "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+        review_body: "We couldn't find the werewolf!",
+        category: "social deduction",
+        created_at: new Date(1610964101251),
+        votes: 5,
+      };
+      return request(app)
+        .patch("/api/reviews/3")
+        .send(incrementVotes)
+        .expect(200)
+        .then(({ body }) => {
+          const { review } = body;
+          expect(review).toEqual({
+            review_id: 3,
+            title: "Ultimate Werewolf",
+            designer: "Akihisa Okui",
+            owner: "bainesface",
+            review_img_url:
+              "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+            review_body: "We couldn't find the werewolf!",
+            category: "social deduction",
+            created_at: new Date(1610964101251),
+            votes: 6,
+            //...updatedReview,
+          });
+        });
+    });
+  });
 });
