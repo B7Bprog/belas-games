@@ -150,15 +150,15 @@ describe("NC-Games app", () => {
           expect(msg).toBe(`Not found.`);
         });
     });
-    test("Responds with Status 404 'Not Found' when passed in invalid value.", () => {
+    test("Responds with Status 400 'Bad Request' when passed in invalid value.", () => {
       const incrementVotes = { inc_votes: "hello" };
       return request(app)
         .patch(`/api/reviews/${review_id}`)
         .send(incrementVotes)
-        .expect(404)
+        .expect(400)
         .then(({ body }) => {
           const { msg } = body;
-          expect(msg).toBe(`Not found.`);
+          expect(msg).toBe(`Bad Request`);
         });
     });
   });
