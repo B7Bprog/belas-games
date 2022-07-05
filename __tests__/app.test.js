@@ -162,4 +162,28 @@ describe("NC-Games app", () => {
         });
     });
   });
+  describe("GET /api/users", () => {
+    test("Responds with status code 200 and an array of objects, each object should have 'username', 'name' and 'avatar_url' property.", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body }) => {
+          const { users } = body;
+          expect(users).toHaveLength(4);
+          users.forEach((category) => {
+            expect(category).toHaveProperty("username");
+            expect(category).toHaveProperty("name");
+            expect(category).toHaveProperty("avatar_url");
+          });
+        });
+    });
+    test("Responds with status 404 'Not found.' .", () => {
+      return request(app)
+        .get("/api/WRONGPATH")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not found.");
+        });
+    });
+  });
 });
