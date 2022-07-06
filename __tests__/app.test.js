@@ -267,4 +267,25 @@ describe("NC-Games app", () => {
         });
     });
   });
+  describe("GET /api/reviews/:review_id/comments", () => {
+    test("Responds with status 200 and an array with the correct properties and the right length.", () => {
+      return request(app)
+        .get(`/api/reviews/2/comments`)
+        .expect(200)
+        .then(({ body: { comments } }) => {
+          expect(Array.isArray(comments)).toBe(true);
+
+          expect(comments).toHaveLength(3);
+
+          comments.forEach((review) => {
+            expect(review).toHaveProperty("comment_id");
+            expect(review).toHaveProperty("votes");
+            expect(review).toHaveProperty("created_at");
+            expect(review).toHaveProperty("author");
+            expect(review).toHaveProperty("body");
+            expect(review).toHaveProperty("review_id");
+          });
+        });
+    });
+  });
 });
