@@ -65,20 +65,6 @@ describe("NC-Games app", () => {
           expect(review).toHaveProperty("created_at");
           expect(review).toHaveProperty("comment_count");
 
-          expect(review).toEqual({
-            review_id: review_id,
-            title: "Jenga",
-            designer: "Leslie Scott",
-            owner: "philippaclaire9",
-            review_img_url:
-              "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
-            review_body: "Fiddly fun for all the family",
-            category: "dexterity",
-            created_at: "2021-01-18T10:01:41.251Z",
-            votes: 5,
-            comment_count: expect.any(String),
-          });
-
           expect(Array.isArray(review)).toBe(false);
         });
     });
@@ -100,6 +86,62 @@ describe("NC-Games app", () => {
         .then(({ body }) => {
           const { msg } = body;
           expect(msg).toBe(`Bad Request`);
+        });
+    });
+    test("Responds with status 200 and a review object containing comment-count.", () => {
+      const review_id = 2;
+      return request(app)
+        .get(`/api/reviews/${review_id}`)
+        .expect(200)
+        .then(({ body }) => {
+          const { review } = body;
+          expect(review).toHaveProperty("comment_count");
+        });
+    });
+    test("Responds with status 200 and a review object containing the right comment-count.", () => {
+      const review_id = 2;
+      return request(app)
+        .get(`/api/reviews/${review_id}`)
+        .expect(200)
+        .then(({ body }) => {
+          const { review } = body;
+          expect(review).toEqual({
+            review_id: 2,
+            title: "Jenga",
+            designer: "Leslie Scott",
+            owner: "philippaclaire9",
+            review_img_url:
+              "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+            review_body: "Fiddly fun for all the family",
+            category: "dexterity",
+            created_at: "2021-01-18T10:01:41.251Z",
+            votes: 5,
+            comment_count: "3",
+          });
+        });
+    });
+    test("Responds with status 200 and a review object containing comment-count: 0 where there are no comments.", () => {
+      const review_id = 4;
+      return request(app)
+        .get(`/api/reviews/${review_id}`)
+        .expect(200)
+        .then(({ body }) => {
+          const { review } = body;
+          console.log(review);
+          expect(review).toEqual({
+            review_id: 4,
+            title: "Dolor reprehenderit",
+            designer: "Gamey McGameface",
+            owner: "mallionaire",
+            review_img_url:
+              "https://images.pexels.com/photos/278918/pexels-photo-278918.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+            review_body:
+              "Consequat velit occaecat voluptate do. Dolor pariatur fugiat sint et proident ex do consequat est. Nisi minim laboris mollit cupidatat et adipisicing laborum do. Sint sit tempor officia pariatur duis ullamco labore ipsum nisi voluptate nulla eu veniam. Et do ad id dolore id cillum non non culpa. Cillum mollit dolor dolore excepteur aliquip. Cillum aliquip quis aute enim anim ex laborum officia. Aliqua magna elit reprehenderit Lorem elit non laboris irure qui aliquip ad proident. Qui enim mollit Lorem labore eiusmod",
+            category: "social deduction",
+            created_at: "2021-01-22T11:35:50.936Z",
+            votes: 7,
+            comment_count: "0",
+          });
         });
     });
   });
@@ -186,41 +228,5 @@ describe("NC-Games app", () => {
           expect(body.msg).toBe("Not found.");
         });
     });
-  });
-  describe("GET /api/reviews/:review_id (comment count)", () => {
-    test("Responds with status 200 and a review object containing comment-count.", () => {
-      const review_id = 2;
-      return request(app)
-        .get(`/api/reviews/${review_id}`)
-        .expect(200)
-        .then(({ body }) => {
-          const { review } = body;
-          expect(review).toHaveProperty("comment_count");
-        });
-    });
-    /////needs working on vvvvv
-    test("Responds with status 200 and a review object containing the right comment-count.", () => {
-      const review_id = 2;
-      return request(app)
-        .get(`/api/reviews/${review_id}`)
-        .expect(200)
-        .then(({ body }) => {
-          const { review } = body;
-          expect(review).toEqual({
-            review_id: 2,
-            title: "Jenga",
-            designer: "Leslie Scott",
-            owner: "philippaclaire9",
-            review_img_url:
-              "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
-            review_body: "Fiddly fun for all the family",
-            category: "dexterity",
-            created_at: "2021-01-18T10:01:41.251Z",
-            votes: 5,
-            comment_count: "3",
-          });
-        });
-    });
-    //Errors are handled in the following 'Describe' block: GET /api/reviews/:review_id"
   });
 });
