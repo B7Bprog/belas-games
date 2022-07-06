@@ -9,6 +9,7 @@ const {
   reviewData,
   userData,
 } = require("../db/data/test-data");
+const { string } = require("pg-format");
 
 beforeEach(() =>
   seed({
@@ -315,6 +316,70 @@ describe("NC-Games app", () => {
     test("Responds with status 404 Not Found error, when passed the wrong path.", () => {
       return request(app)
         .get(`/api/reviews/3/WRONG`)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not found.");
+        });
+    });
+  });
+  describe("POST /api/reviews/:review_id/comments", () => {
+    test("Responds with status 201 and the new comment with all the right properties.", () => {
+      const newComment = {
+        username: "philippaclaire9",
+        body: "Even aliens like this game!",
+      };
+      return request(app)
+        .post("/api/reviews/3/comments")
+        .send(newComment)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.comment).toEqual({
+            comment_id: 7,
+            body: "Even aliens like this game!",
+            votes: 0,
+            author: "philippaclaire9",
+            review_id: 3,
+            created_at: expect.any(String),
+          });
+        });
+    });
+    test("Responds with status 404 Not Found error, when passed wrong ID", () => {
+      const newComment = {
+        username: "philippaclaire9",
+        body: "Even aliens like this game!",
+      };
+
+      return request(app)
+        .get(`/api/reviews/999/comments`)
+        .send(newComment)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Review with ID 999 is not found.");
+        });
+    });
+    test("Responds with status 400 Bad Request error, when passed an invalid ID", () => {
+      const newComment = {
+        username: "philippaclaire9",
+        body: "Even aliens like this game!",
+      };
+
+      return request(app)
+        .get(`/api/reviews/hello/comments`)
+        .send(newComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+    test("Responds with status 404 Not found error, when passed a wrong path.", () => {
+      const newComment = {
+        username: "philippaclaire9",
+        body: "Even aliens like this game!",
+      };
+
+      return request(app)
+        .get(`/api/reviews/3/commentz`)
+        .send(newComment)
         .expect(404)
         .then(({ body }) => {
           expect(body.msg).toBe("Not found.");

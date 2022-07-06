@@ -16,3 +16,19 @@ exports.selectCommentsByReview = async (review_id) => {
   }
   return commentQuery.rows;
 };
+
+exports.insertComment = (review_id, updates) => {
+  const { username, body } = updates;
+  const d = new Date();
+  let time = d.getTime();
+  console.log(time);
+  return connection
+    .query(
+      `INSERT INTO comments (author, body, votes, review_id, created_at)VALUES ($1,$2, $3, $4, $5) RETURNING *;`,
+      [username, body, 0, review_id, new Date(time)]
+    )
+    .then(({ rows }) => {
+      console.log(rows[0]);
+      return rows[0];
+    });
+};
