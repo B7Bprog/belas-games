@@ -36,7 +36,6 @@ exports.updateReview = (review_id, body) => {
           msg: `ID ${review_id} does not exist.`,
         });
       }
-      //result.rows[0].votes += inc_votes;
       return result.rows[0];
     });
 };

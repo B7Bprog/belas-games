@@ -127,7 +127,7 @@ describe("NC-Games app", () => {
         .expect(200)
         .then(({ body }) => {
           const { review } = body;
-          console.log(review);
+
           expect(review).toEqual({
             review_id: 4,
             title: "Dolor reprehenderit",
@@ -167,7 +167,6 @@ describe("NC-Games app", () => {
             category: "social deduction",
             created_at: "2021-01-18T10:01:41.251Z",
             votes: 6,
-            //...updatedReview,
           });
         });
     });
@@ -237,15 +236,16 @@ describe("NC-Games app", () => {
         .then(({ body: { reviews } }) => {
           expect(Array.isArray(reviews)).toBe(true);
         });
-      /*  test("Responds with status code 200 and an array of objects sorted by date in descending order.", () => {
-      //Arrange
-      const input = testInput;
-      const expected = testExpectedReturn;
-      //Act
-      const actual = nameOfFunctionToTest(input);
-      //Assert
-      expect(actual).toBe(expected);
-    }); */
+    });
+    test("Responds with status code 200 and an array of objects sorted by date in descending order.", () => {
+      return request(app)
+        .get(`/api/reviews`)
+        .expect(200)
+        .then(({ body: { reviews } }) => {
+          expect(reviews).toBeSortedBy("created_at", {
+            descending: true,
+          });
+        });
     });
   });
 });
