@@ -229,4 +229,23 @@ describe("NC-Games app", () => {
         });
     });
   });
+  describe("GET /api/reviews", () => {
+    test("Responds with status code 200 and an array.", () => {
+      return request(app)
+        .get(`/api/reviews`)
+        .expect(200)
+        .then(({ body: { reviews } }) => {
+          expect(Array.isArray(reviews)).toBe(true);
+        });
+      /*  test("Responds with status code 200 and an array of objects sorted by date in descending order.", () => {
+      //Arrange
+      const input = testInput;
+      const expected = testExpectedReturn;
+      //Act
+      const actual = nameOfFunctionToTest(input);
+      //Assert
+      expect(actual).toBe(expected);
+    }); */
+    });
+  });
 });
