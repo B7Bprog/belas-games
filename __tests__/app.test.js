@@ -287,5 +287,37 @@ describe("NC-Games app", () => {
           });
         });
     });
+    test("Responds with status 404 Not Found error, when passed an ID with no comments.", () => {
+      return request(app)
+        .get(`/api/reviews/6/comments`)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Review with ID 6 has no comments.");
+        });
+    });
+    test("Responds with status 404 Not Found error, when passed wrong ID", () => {
+      return request(app)
+        .get(`/api/reviews/999/comments`)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Review with ID 999 has no comments.");
+        });
+    });
+    test("Responds with status 400 Bad Request error, when passed an invalid ID", () => {
+      return request(app)
+        .get(`/api/reviews/'hello'/comments`)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+    test("Responds with status 404 Not Found error, when passed the wrong path.", () => {
+      return request(app)
+        .get(`/api/reviews/3/WRONG`)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not found.");
+        });
+    });
   });
 });
