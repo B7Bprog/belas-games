@@ -284,15 +284,16 @@ describe("NC-Games app", () => {
             expect(review).toHaveProperty("author");
             expect(review).toHaveProperty("body");
             expect(review).toHaveProperty("review_id");
+            expect(review.review_id).toBe(2);
           });
         });
     });
     test("Responds with status 404 Not Found error, when passed an ID with no comments.", () => {
       return request(app)
         .get(`/api/reviews/6/comments`)
-        .expect(404)
-        .then(({ body }) => {
-          expect(body.msg).toBe("Review with ID 6 has no comments.");
+        .expect(200)
+        .then(({ body: { comments } }) => {
+          expect(comments).toEqual([]);
         });
     });
     test("Responds with status 404 Not Found error, when passed wrong ID", () => {
@@ -300,12 +301,12 @@ describe("NC-Games app", () => {
         .get(`/api/reviews/999/comments`)
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toBe("Review with ID 999 has no comments.");
+          expect(body.msg).toBe("Review with ID 999 is not found.");
         });
     });
     test("Responds with status 400 Bad Request error, when passed an invalid ID", () => {
       return request(app)
-        .get(`/api/reviews/'hello'/comments`)
+        .get(`/api/reviews/hello/comments`)
         .expect(400)
         .then(({ body }) => {
           expect(body.msg).toBe("Bad Request");
