@@ -51,7 +51,6 @@ exports.selectReviews = () => {
   ORDER BY reviews.created_at DESC;`
     )
     .then((result) => {
-      console.log("result rows " + result.rows);
       return result.rows;
     });
 };
