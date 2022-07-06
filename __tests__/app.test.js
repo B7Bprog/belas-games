@@ -288,7 +288,7 @@ describe("NC-Games app", () => {
           });
         });
     });
-    test("Responds with status 404 Not Found error, when passed an ID with no comments.", () => {
+    test("Responds with status 200 and an empty array, when passed an ID where there are no comments.", () => {
       return request(app)
         .get(`/api/reviews/6/comments`)
         .expect(200)
