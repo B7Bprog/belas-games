@@ -127,7 +127,7 @@ describe("NC-Games app", () => {
         .expect(200)
         .then(({ body }) => {
           const { review } = body;
-          console.log(review);
+
           expect(review).toEqual({
             review_id: 4,
             title: "Dolor reprehenderit",
@@ -167,7 +167,6 @@ describe("NC-Games app", () => {
             category: "social deduction",
             created_at: "2021-01-18T10:01:41.251Z",
             votes: 6,
-            //...updatedReview,
           });
         });
     });
@@ -226,6 +225,45 @@ describe("NC-Games app", () => {
         .expect(404)
         .then(({ body }) => {
           expect(body.msg).toBe("Not found.");
+        });
+    });
+  });
+  describe("GET /api/reviews", () => {
+    test("Responds with status code 200 and an array.", () => {
+      return request(app)
+        .get(`/api/reviews`)
+        .expect(200)
+        .then(({ body: { reviews } }) => {
+          expect(Array.isArray(reviews)).toBe(true);
+        });
+    });
+    test("Responds with status code 200 and an array of objects sorted by date in descending order.", () => {
+      return request(app)
+        .get(`/api/reviews`)
+        .expect(200)
+        .then(({ body: { reviews } }) => {
+          expect(reviews).toBeSortedBy("created_at", {
+            descending: true,
+          });
+        });
+    });
+    test("Responds with status code 200 and an array of objects with the right properties.", () => {
+      return request(app)
+        .get(`/api/reviews`)
+        .expect(200)
+        .then(({ body: { reviews } }) => {
+          reviews.forEach((review) => {
+            expect(review).toHaveProperty("owner");
+            expect(review).toHaveProperty("title");
+            expect(review).toHaveProperty("review_id");
+            expect(review).toHaveProperty("category");
+            expect(review).toHaveProperty("review_img_url");
+            expect(review).toHaveProperty("created_at");
+            expect(review).toHaveProperty("votes");
+            expect(review).toHaveProperty("review_body");
+            expect(review).toHaveProperty("designer");
+            expect(review).toHaveProperty("comment_count");
+          });
         });
     });
   });
