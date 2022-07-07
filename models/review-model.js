@@ -40,17 +40,70 @@ exports.updateReview = (review_id, body) => {
     });
 };
 
-exports.selectReviews = () => {
-  return connection
-    .query(
+exports.selectReviews = async (
+  sort_by = "created_at",
+  order = "desc",
+  category
+) => {
+  const validSortBy = [
+    "review_id",
+    "title",
+    "designer",
+    "owner",
+    "review_img_url",
+    "review_body",
+    "category",
+    "created_at",
+    "votes",
+  ];
+
+  if (validSortBy.indexOf(sort_by.toLowerCase()) === -1) {
+    //Checking for valid sort_by query
+    return Promise.reject({
+      status: 400,
+      msg: `Sort_by '${sort_by}' is invalid`,
+    });
+  }
+
+  const validOrders = ["desc", "asc"];
+
+  if (validOrders.indexOf(order.toLowerCase()) === -1) {
+    //Checking for valid order query
+    return Promise.reject({
+      status: 400,
+      msg: `Order '${order}' is invalid`,
+    });
+  }
+
+  if (category) {
+    const reviews = await connection.query(
+      `SELECT reviews.*,  
+  COUNT (comments.body) AS comment_count 
+  FROM reviews 
+  LEFT JOIN comments ON comments.review_id = reviews.review_id  
+  WHERE reviews.category = $1
+  GROUP BY reviews.review_id
+  ORDER BY reviews.${sort_by} ${order};`,
+      [category]
+    );
+    if (reviews.rowCount === 0) {
+      //Checking if category exists
+      return Promise.reject({
+        status: 404,
+        msg: `Category '${category}' does not exist.`,
+      });
+    }
+    return reviews.rows;
+  } else {
+    const reviews = await connection.query(
       `SELECT reviews.*,  
   COUNT (comments.body) AS comment_count 
   FROM reviews 
   LEFT JOIN comments ON comments.review_id = reviews.review_id  
   GROUP BY reviews.review_id
-  ORDER BY reviews.created_at DESC;`
-    )
-    .then((result) => {
-      return result.rows;
-    });
+  ORDER BY reviews.${sort_by} ${order};`
+    );
+
+    return reviews.rows;
+  }
 };
