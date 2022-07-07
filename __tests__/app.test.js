@@ -323,7 +323,7 @@ describe("NC-Games app", () => {
     });
   });
   describe("POST /api/reviews/:review_id/comments", () => {
-    test("Responds with status 201 and the new comment with all the right properties.", () => {
+    test("Responds with status 201 and the new comment which has all the right properties.", () => {
       const newComment = {
         username: "philippaclaire9",
         body: "Even aliens like this game!",
@@ -333,9 +333,28 @@ describe("NC-Games app", () => {
         .send(newComment)
         .expect(201)
         .then(({ body }) => {
+          expect(body.comment).toHaveProperty("comment_id");
+          expect(body.comment).toHaveProperty("votes");
+          expect(body.comment).toHaveProperty("created_at");
+          expect(body.comment).toHaveProperty("author");
+          expect(body.comment).toHaveProperty("body");
+          expect(body.comment).toHaveProperty("review_id");
+          expect(body.comment).toHaveProperty("created_at");
+        });
+    });
+    test("Responds with status 201 and the new comment with all the right properties when body is a number.", () => {
+      const newComment = {
+        username: "philippaclaire9",
+        body: 33,
+      };
+      return request(app)
+        .post("/api/reviews/3/comments")
+        .send(newComment)
+        .expect(201)
+        .then(({ body }) => {
           expect(body.comment).toEqual({
             comment_id: 7,
-            body: "Even aliens like this game!",
+            body: "33",
             votes: 0,
             author: "philippaclaire9",
             review_id: 3,
@@ -343,7 +362,41 @@ describe("NC-Games app", () => {
           });
         });
     });
-    test.only("Responds with status 404 'Not found.' error, when passed the wrong username.", () => {
+    test("Responds with status 400 Bad Request when 'body' is missing from the request.", () => {
+      const newComment = {
+        username: "philippaclaire9",
+      };
+      return request(app)
+        .post("/api/reviews/3/comments")
+        .send(newComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+    test("Responds with status 400 Bad Request when 'username' is missing from the request.", () => {
+      const newComment = {
+        body: "Even aliens like this game!",
+      };
+      return request(app)
+        .post("/api/reviews/3/comments")
+        .send(newComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+    test("Responds with status 400 Bad Request when 'body' and 'username' is missing from the request.", () => {
+      const newComment = {};
+      return request(app)
+        .post("/api/reviews/3/comments")
+        .send(newComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+    test("Responds with status 404 'Not found.' error, when passed the wrong username.", () => {
       const newComment = {
         username: "SOMEBODY",
         body: "Even aliens like this game!",
@@ -357,6 +410,20 @@ describe("NC-Games app", () => {
           expect(body.msg).toBe("User SOMEBODY is not found.");
         });
     });
+    test("Responds with status 400 'Bad Request' error, when the username is the wrong datatype.", () => {
+      const newComment = {
+        username: 22,
+        body: "Even aliens like this game!",
+      };
+
+      return request(app)
+        .post(`/api/reviews/3/comments`)
+        .send(newComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
     test("Responds with status 404 Not Found error, when passed wrong ID", () => {
       const newComment = {
         username: "philippaclaire9",
@@ -364,11 +431,11 @@ describe("NC-Games app", () => {
       };
 
       return request(app)
-        .get(`/api/reviews/999/comments`)
+        .post(`/api/reviews/999/comments`)
         .send(newComment)
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toBe("Review with ID 999 is not found.");
+          expect(body.msg).toBe("Not found.");
         });
     });
     test("Responds with status 400 Bad Request error, when passed an invalid ID", () => {
@@ -378,7 +445,7 @@ describe("NC-Games app", () => {
       };
 
       return request(app)
-        .get(`/api/reviews/hello/comments`)
+        .post(`/api/reviews/hello/comments`)
         .send(newComment)
         .expect(400)
         .then(({ body }) => {
@@ -392,7 +459,7 @@ describe("NC-Games app", () => {
       };
 
       return request(app)
-        .get(`/api/reviews/3/commentz`)
+        .post(`/api/reviews/3/commentz`)
         .send(newComment)
         .expect(404)
         .then(({ body }) => {

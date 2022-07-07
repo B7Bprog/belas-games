@@ -18,41 +18,37 @@ exports.selectCommentsByReview = async (review_id) => {
 };
 
 exports.insertComment = async (review_id, updates) => {
-  console.log("in modelfunc");
   const { username, body } = updates;
-  const d = new Date();
-  let time = d.getTime();
-  console.log(username);
+
+  if (!body) {
+    return Promise.reject({
+      status: 400,
+      msg: `Bad Request`,
+    });
+  }
 
   const checkUsernames = await connection.query(
     `SELECT * FROM users WHERE username=$1;`,
     [username]
   );
-  console.log(checkUsernames.rows);
+
+  if (typeof username !== "string") {
+    return Promise.reject({
+      status: 400,
+      msg: `Bad Request`,
+    });
+  }
 
   if (checkUsernames.rowCount === 0) {
-    console.log("inside reject");
     return Promise.reject({
       status: 404,
       msg: `User ${username} is not found.`,
     });
   }
-  /*  
-  const checkUsernames = await connection.query(`SELECT * FROM users;`);
-  console.log(checkUsernames.rows);
-  const found = checkUsernames.rows.find(
-    (user) => user.username === `${username}`
-  );
 
-  if (!found) {
-    return Promise.reject({
-      status: 404,
-      msg: `User ${review_id} is not found.`,
-    });
-  } */
   const mainQuery = await connection.query(
-    `INSERT INTO comments (author, body, votes, review_id, created_at)VALUES ($1,$2, $3, $4, $5) RETURNING *;`,
-    [username, body, 0, review_id, new Date(time)]
+    `INSERT INTO comments (author, body, review_id)VALUES ($1,$2,$3) RETURNING *;`,
+    [username, body, review_id]
   );
 
   return mainQuery.rows[0];
