@@ -343,18 +343,18 @@ describe("NC-Games app", () => {
           });
         });
     });
-    test.only("Responds with status 400 Bad Request error, when passed the wrong username.", () => {
+    test.only("Responds with status 404 'Not found.' error, when passed the wrong username.", () => {
       const newComment = {
         username: "SOMEBODY",
         body: "Even aliens like this game!",
       };
 
       return request(app)
-        .get(`/api/reviews/hello/comments`)
+        .post(`/api/reviews/3/comments`)
         .send(newComment)
-        .expect(400)
+        .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toBe("Bad Request");
+          expect(body.msg).toBe("User SOMEBODY is not found.");
         });
     });
     test("Responds with status 404 Not Found error, when passed wrong ID", () => {
