@@ -592,4 +592,25 @@ describe("NC-Games app", () => {
         });
     });
   });
+  describe("DELETE /api/comments/:comment_id", () => {
+    test("Deleting existing comment.", () => {
+      return request(app).delete("/api/comments/1").expect(204);
+    });
+    test("Responds with status 404 when a comment ID doesn't exist in the database.", () => {
+      return request(app)
+        .delete("/api/comments/999")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Comment ID '999' does not exist.");
+        });
+    });
+    test("Responds with status 400 when the comment ID is invalid type.", () => {
+      return request(app)
+        .delete("/api/comments/ID")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+  });
 });

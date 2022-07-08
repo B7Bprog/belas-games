@@ -53,3 +53,16 @@ exports.insertComment = async (review_id, updates) => {
 
   return mainQuery.rows[0];
 };
+
+exports.eraseComment = async (comment_id) => {
+  const erase = await connection.query(
+    "DELETE FROM comments WHERE comment_id=$1 RETURNING *;",
+    [comment_id]
+  );
+  if (erase.rowCount === 0) {
+    return Promise.reject({
+      status: 404,
+      msg: `Comment ID '${comment_id}' does not exist.`,
+    });
+  }
+};
