@@ -326,7 +326,7 @@ describe("NC-Games app", () => {
           ]);
         });
     });
-    test("Responds with status code 200 and an array of objects of a specific category sorted by 'owner' in descending order.", () => {
+    test("Responds with status code 200 and an array of objects of a specific category sorted by 'owner' in descending order and the array has the right number of items.", () => {
       return request(app)
         .get(`/api/reviews?sort_by=owner&category=social deduction`)
         .expect(200)
@@ -343,6 +343,7 @@ describe("NC-Games app", () => {
               expect.objectContaining({ category: "social deduction" })
             );
           });
+          expect(reviews).toHaveLength(11);
         });
     });
     test("Responds with status code 404 for a non-existent category, where category is the only query.", () => {
