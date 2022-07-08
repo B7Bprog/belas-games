@@ -21,7 +21,7 @@ beforeEach(() =>
 );
 
 afterAll(() => db.end());
-
+//GET /api/categories ///////////////////////////////////////////////////////////////
 describe("NC-Games app", () => {
   describe("GET /api/categories", () => {
     test("Responds with status 200 and an array of categories with length 4 and checks for correct properties.", () => {
@@ -46,6 +46,7 @@ describe("NC-Games app", () => {
         });
     });
   });
+  //GET /api/reviews/:review_id /////////////////////////////////////////////////////
   describe("GET /api/reviews/:review_id", () => {
     test("Returns 200, responds with a single review object, which is not an array and has the right properties.", () => {
       //Arrange
@@ -146,6 +147,7 @@ describe("NC-Games app", () => {
         });
     });
   });
+  //PATCH /api/reviews/:review_id //////////////////////////////////////////////////
   describe(" PATCH /api/reviews/:review_id", () => {
     const review_id = 3;
     test("Status 200 responds with the updated review.", () => {
@@ -205,6 +207,7 @@ describe("NC-Games app", () => {
         });
     });
   });
+  //GET /api/users ///////////////////////////////////////////////////////////////
   describe("GET /api/users", () => {
     test("Responds with status code 200 and an array of objects, each object should have 'username', 'name' and 'avatar_url' property.", () => {
       return request(app)
@@ -229,6 +232,7 @@ describe("NC-Games app", () => {
         });
     });
   });
+  //GET /api/reviews ////////////////////////////////////////////////////////////////
   describe("GET /api/reviews", () => {
     test("Responds with status code 200 and an array.", () => {
       return request(app)
@@ -267,7 +271,127 @@ describe("NC-Games app", () => {
           });
         });
     });
+    test("Responds with status code 200 and an array of objects sorted by 'title' in descending order.", () => {
+      return request(app)
+        .get(`/api/reviews?sort_by=title`)
+        .expect(200)
+        .then(({ body: { reviews } }) => {
+          expect(reviews).toBeSortedBy("title", {
+            //descending: false,
+            compare: function sortTitle(a, b) {
+              return b - a;
+            },
+          });
+        });
+    });
+    test("Responds with status code 200 and an array of objects sorted by 'votes' in ascending order.", () => {
+      return request(app)
+        .get(`/api/reviews?sort_by=votes&order=asc`)
+        .expect(200)
+        .then(({ body: { reviews } }) => {
+          expect(reviews).toBeSortedBy("votes", {
+            //descending: false,
+            compare: function sort(a, b) {
+              return a - b;
+            },
+          });
+        });
+    });
+    test("Responds with status code 200 and an array of objects of a specific category sorted by 'designer' in ascending order.", () => {
+      return request(app)
+        .get(`/api/reviews?sort_by=designer&order=asc&category=dexterity`)
+        .expect(200)
+        .then(({ body: { reviews } }) => {
+          expect(reviews).toBeSortedBy("designer", {
+            //descending: false,
+            compare: function sort(a, b) {
+              //asc: a-b
+              return a - b;
+            },
+          });
+          expect(reviews).toEqual([
+            {
+              review_id: 2,
+              title: "Jenga",
+              designer: "Leslie Scott",
+              owner: "philippaclaire9",
+              review_img_url:
+                "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+              review_body: "Fiddly fun for all the family",
+              category: "dexterity",
+              created_at: "2021-01-18T10:01:41.251Z",
+              votes: 5,
+              comment_count: "3",
+            },
+          ]);
+        });
+    });
+    test("Responds with status code 200 and an array of objects of a specific category sorted by 'owner' in descending order and the array has the right number of items.", () => {
+      return request(app)
+        .get(`/api/reviews?sort_by=owner&category=social deduction`)
+        .expect(200)
+        .then(({ body: { reviews } }) => {
+          expect(reviews).toBeSortedBy("owner", {
+            //descending: false,
+            compare: function sort(a, b) {
+              //asc: a-b
+              return a - b;
+            },
+          });
+          reviews.forEach((review) => {
+            expect(review).toEqual(
+              expect.objectContaining({ category: "social deduction" })
+            );
+          });
+          expect(reviews).toHaveLength(11);
+        });
+    });
+    test("Responds with status code 404 for a non-existent category, where category is the only query.", () => {
+      return request(app)
+        .get(`/api/reviews?category=gomoku`)
+        .expect(404)
+        .then(({ body }) => {
+          const { msg } = body;
+          expect(msg).toBe(`Category 'gomoku' does not exist.`);
+        });
+    });
+    test("Responds with status code 404 for a non-existent category.", () => {
+      return request(app)
+        .get(`/api/reviews?sort_by=owner&category=gomoku`)
+        .expect(404)
+        .then(({ body }) => {
+          const { msg } = body;
+          expect(msg).toBe(`Category 'gomoku' does not exist.`);
+        });
+    });
+    test("Responds with status code 400 for an invalid order query.", () => {
+      return request(app)
+        .get(`/api/reviews?sort_by=owner&order=backwards`)
+        .expect(400)
+        .then(({ body }) => {
+          const { msg } = body;
+          expect(msg).toBe(`Order 'backwards' is invalid`);
+        });
+    });
+    test("Responds with status code 400 for an invalid sort_by query.", () => {
+      return request(app)
+        .get(`/api/reviews?sort_by=age&order=backwards`)
+        .expect(400)
+        .then(({ body }) => {
+          const { msg } = body;
+          expect(msg).toBe(`Sort_by 'age' is invalid`);
+        });
+    });
+    test("Responds with status code 404 when category exists. but there are no relevant reviews.", () => {
+      return request(app)
+        .get(`/api/reviews?category=children's games`)
+        .expect(200)
+        .then(({ body: { reviews } }) => {
+          expect(reviews).toEqual([]);
+        });
+    });
   });
+  //GET /api/reviews/:review_id/comments ////////////////////////////////////////////
   describe("GET /api/reviews/:review_id/comments", () => {
     test("Responds with status 200 and an array with the correct properties and the right length.", () => {
       return request(app)
@@ -322,6 +446,7 @@ describe("NC-Games app", () => {
         });
     });
   });
+  //POST /api/reviews/:review_id/comments ///////////////////////////////////////////
   describe("POST /api/reviews/:review_id/comments", () => {
     test("Responds with status 201 and the new comment which has all the right properties.", () => {
       const newComment = {
