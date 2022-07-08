@@ -382,6 +382,14 @@ describe("NC-Games app", () => {
           expect(msg).toBe(`Sort_by 'age' is invalid`);
         });
     });
+    test("Responds with status code 404 when category exists. but there are no relevant reviews.", () => {
+      return request(app)
+        .get(`/api/reviews?category=children's games`)
+        .expect(200)
+        .then(({ body: { reviews } }) => {
+          expect(reviews).toEqual([]);
+        });
+    });
   });
   //GET /api/reviews/:review_id/comments ////////////////////////////////////////////
   describe("GET /api/reviews/:review_id/comments", () => {

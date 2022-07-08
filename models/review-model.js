@@ -45,6 +45,11 @@ exports.selectReviews = async (
   order = "desc",
   category
 ) => {
+  const allCategories = await connection.query(
+    `SELECT * FROM categories WHERE slug=$1;`,
+    [category]
+  );
+
   const validSortBy = [
     "review_id",
     "title",
@@ -75,35 +80,30 @@ exports.selectReviews = async (
     });
   }
 
-  if (category) {
-    const reviews = await connection.query(
-      `SELECT reviews.*,  
-  COUNT (comments.body) AS comment_count 
-  FROM reviews 
-  LEFT JOIN comments ON comments.review_id = reviews.review_id  
-  WHERE reviews.category = $1
-  GROUP BY reviews.review_id
-  ORDER BY reviews.${sort_by} ${order};`,
-      [category]
-    );
-    if (reviews.rowCount === 0) {
-      //Checking if category exists
-      return Promise.reject({
-        status: 404,
-        msg: `Category '${category}' does not exist.`,
-      });
-    }
-    return reviews.rows;
-  } else {
-    const reviews = await connection.query(
-      `SELECT reviews.*,  
-  COUNT (comments.body) AS comment_count 
-  FROM reviews 
-  LEFT JOIN comments ON comments.review_id = reviews.review_id  
-  GROUP BY reviews.review_id
-  ORDER BY reviews.${sort_by} ${order};`
-    );
+  //Sectioning query
 
-    return reviews.rows;
+  let queryStr = `SELECT reviews.*,  
+  COUNT (comments.body) AS comment_count 
+  FROM reviews 
+  LEFT JOIN comments ON comments.review_id = reviews.review_id  `;
+
+  let queryValues = [];
+  if (category) {
+    queryStr += `WHERE reviews.category = $1 `;
+    queryValues.push(category);
   }
+
+  queryStr += `GROUP BY reviews.review_id
+  ORDER BY reviews.${sort_by} ${order};`;
+
+  const reviews = await connection.query(queryStr, queryValues);
+
+  if (reviews.rowCount === 0 && allCategories.rowCount === 0) {
+    //Checking if category exists
+    return Promise.reject({
+      status: 404,
+      msg: `Category '${category}' does not exist.`,
+    });
+  }
+  return reviews.rows;
 };
