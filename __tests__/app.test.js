@@ -592,6 +592,7 @@ describe("NC-Games app", () => {
         });
     });
   });
+  //DELETE /api/comments/:comment_id
   describe("DELETE /api/comments/:comment_id", () => {
     test("Deleting existing comment.", () => {
       return request(app).delete("/api/comments/1").expect(204);
@@ -610,6 +611,31 @@ describe("NC-Games app", () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.msg).toBe("Bad Request");
+        });
+    });
+  });
+  describe("GET /api", () => {
+    test("Responds with status 200 and a JSON describing all endpoints with examples.", () => {
+      return request(app)
+        .get(`/api`)
+        .expect(200)
+        .then(({ body }) => {
+          console.log(body);
+          expect(body).toEqual(
+            expect.objectContaining({ endpoints: expect.any(Object) })
+          );
+        });
+    });
+    test("Responds with status 200 and a JSON describing all endpoints with examples.", () => {
+      return request(app)
+        .get(`/api`)
+        .expect(200)
+        .then(({ body }) => {
+          console.log(body);
+          expect(body.endpoints["GET /api"]).toEqual({
+            description:
+              "serves up a json representation of all the available endpoints of the api",
+          });
         });
     });
   });

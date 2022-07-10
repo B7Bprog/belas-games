@@ -10,6 +10,8 @@ const {
   postComment,
   deleteComment,
 } = require("./controllers/comment-controller");
+
+const { fetchEndpoints } = require("./controllers/api-controller");
 const express = require("express");
 const app = express();
 
@@ -23,6 +25,7 @@ app.get("/api/reviews", getReviews);
 app.get("/api/reviews/:review_id/comments", getCommentsByReview);
 app.post("/api/reviews/:review_id/comments", postComment);
 app.delete("/api/comments/:comment_id", deleteComment);
+app.get("/api", fetchEndpoints);
 
 app.use("*", (req, res) => {
   res.status(404).send({ msg: "Not found." });
