@@ -21,9 +21,6 @@ exports.patchReview = (req, res, next) => {
   }
   updateReview(review_id, req.body)
     .then((review) => {
-      /*  if (!review.votes) {
-        next();
-      } */
       if (typeof review.votes !== "number") {
         next();
       }
