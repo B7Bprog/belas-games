@@ -83,9 +83,7 @@ exports.selectReviews = async (
 
   //Sectioning query
 
-  let queryStr = `SELECT reviews.*,  
-  COUNT (comments.body)::INT AS comment_count 
-  FROM reviews 
+  let queryStr = `SELECT reviews.*,COUNT (comments.body)::INT AS comment_count FROM reviews 
   LEFT JOIN comments ON reviews.review_id = comments.review_id `;
 
   let queryValues = [];
@@ -95,7 +93,7 @@ exports.selectReviews = async (
   }
 
   queryStr += `GROUP BY reviews.review_id
-  ORDER BY reviews.${sort_by} ${order};`;
+  ORDER BY ${sort_by} ${order};`;
 
   const reviews = await connection.query(queryStr, queryValues);
 
