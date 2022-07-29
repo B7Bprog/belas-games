@@ -60,6 +60,7 @@ exports.selectReviews = async (
     "category",
     "created_at",
     "votes",
+    "comment_count",
   ];
 
   if (validSortBy.indexOf(sort_by.toLowerCase()) === -1) {
