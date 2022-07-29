@@ -86,7 +86,7 @@ exports.selectReviews = async (
   let queryStr = `SELECT reviews.*,  
   COUNT (comments.body) AS comment_count 
   FROM reviews 
-  LEFT JOIN comments ON comments.review_id = reviews.review_id  `;
+  LEFT JOIN comments ON reviews.review_id = comments.review_id `;
 
   let queryValues = [];
   if (category) {
