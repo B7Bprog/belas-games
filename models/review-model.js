@@ -84,7 +84,7 @@ exports.selectReviews = async (
   //Sectioning query
 
   let queryStr = `SELECT reviews.*,  
-  COUNT (comments.body) AS comment_count 
+  COUNT (comments.body)::INT AS comment_count 
   FROM reviews 
   LEFT JOIN comments ON reviews.review_id = comments.review_id `;
 
