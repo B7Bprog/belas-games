@@ -321,7 +321,7 @@ describe("NC-Games app", () => {
               category: "dexterity",
               created_at: "2021-01-18T10:01:41.251Z",
               votes: 5,
-              comment_count: "3",
+              comment_count: 3,
             },
           ]);
         });
@@ -620,7 +620,6 @@ describe("NC-Games app", () => {
         .get(`/api`)
         .expect(200)
         .then(({ body }) => {
-          console.log(body);
           expect(body).toEqual(
             expect.objectContaining({ endpoints: expect.any(Object) })
           );
@@ -631,7 +630,6 @@ describe("NC-Games app", () => {
         .get(`/api`)
         .expect(200)
         .then(({ body }) => {
-          console.log(body);
           expect(body.endpoints["GET /api"]).toEqual({
             description:
               "serves up a json representation of all the available endpoints of the api",

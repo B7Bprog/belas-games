@@ -40,7 +40,11 @@ exports.updateReview = (review_id, body) => {
     });
 };
 
-exports.selectReviews = async (sort_by = "title", order = "asc", category) => {
+exports.selectReviews = async (
+  sort_by = "created_at",
+  order = "desc",
+  category
+) => {
   const allCategories = await connection.query(
     `SELECT * FROM categories WHERE slug=$1;`,
     [category]
