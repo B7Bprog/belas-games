@@ -32,7 +32,6 @@ app.get("/api", fetchEndpoints);
 
 app.use("*", (req, res) => {
   res.status(404).send({ msg: "Not found." });
-  next();
 });
 
 app.use((err, req, res, next) => {
