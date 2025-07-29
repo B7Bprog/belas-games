@@ -26,7 +26,7 @@ exports.updateReview = (review_id, body) => {
   const { inc_votes } = body;
   return connection
     .query(
-      "UPDATE reviews SET votes = votes + $2 WHERE review_id=$1 RETURNING *;",
+      "UPDATE reviews SET votes = votes + $2 WHERE review_id = $1 RETURNING *;",
       [review_id, inc_votes]
     )
     .then((result) => {
@@ -46,7 +46,7 @@ exports.selectReviews = async (
   category
 ) => {
   const allCategories = await connection.query(
-    `SELECT * FROM categories WHERE slug=$1;`,
+    `SELECT * FROM categories WHERE slug = $1;`,
     [category]
   );
 
@@ -64,7 +64,6 @@ exports.selectReviews = async (
   ];
 
   if (validSortBy.indexOf(sort_by.toLowerCase()) === -1) {
-    //Checking for valid sort_by query
     return Promise.reject({
       status: 400,
       msg: `Sort_by '${sort_by}' is invalid`,
@@ -74,14 +73,11 @@ exports.selectReviews = async (
   const validOrders = ["desc", "asc"];
 
   if (validOrders.indexOf(order.toLowerCase()) === -1) {
-    //Checking for valid order query
     return Promise.reject({
       status: 400,
       msg: `Order '${order}' is invalid`,
     });
   }
-
-  //Sectioning query
 
   let queryStr = `SELECT reviews.*,COUNT (comments.body)::INT AS comment_count FROM reviews 
   LEFT JOIN comments ON reviews.review_id = comments.review_id `;
@@ -98,7 +94,6 @@ exports.selectReviews = async (
   const reviews = await connection.query(queryStr, queryValues);
 
   if (reviews.rowCount === 0 && allCategories.rowCount === 0) {
-    //Checking if category exists
     return Promise.reject({
       status: 404,
       msg: `Category '${category}' does not exist.`,

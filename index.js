@@ -41,14 +41,43 @@ app.use((err, req, res, next) => {
   ) {
     return res.status(400).send({ msg: err.msg });
   }
-  if (err.hasOwnProperty("msg") && err.msg !== "Bad Request")
-    return res.status(404).send(err);
-  if (err.code === "22P02" || err.msg === "Bad Request") {
-    return res.status(400).send({ msg: "Bad Request" });
-  } else return res.status(404).send({ msg: "Not found." });
+  else next(err);
+
 });
+
+app.use((err, req,res, next)=>{
+if (err.hasOwnProperty("msg") && err.msg !== "Bad Request")
+    return res.status(404).send({msg: err.msg});
+  else next(err)
+})
+app.use((err, req,res, next)=>{
+    if (err.code === "22P02" || err.msg === "Bad Request") {
+    return res.status(400).send({ msg: "Bad Request" });
+    }
+    else next(err);
+})
+app.use((err, req,res, next)=>{
+  if(err.status === 404)
+  return res.status(404).send({ msg: "Not found." });
+  else next()
+})
 app.use((err, req, res, next) => {
   res.status(500).send({ msg: "Internal Server Error" });
 });
 
 module.exports = app;
+
+
+// app.use((err, req, res, next) => {
+//   if (
+//     err.hasOwnProperty("msg") &&
+//     (err.msg.startsWith("Order") || err.msg.startsWith("Sort_by"))
+//   ) {
+//     return res.status(400).send({ msg: err.msg });
+//   }
+//   if (err.hasOwnProperty("msg") && err.msg !== "Bad Request")
+//     return res.status(404).send(err);
+//   if (err.code === "22P02" || err.msg === "Bad Request") {
+//     return res.status(400).send({ msg: "Bad Request" });
+//   } else return res.status(404).send({ msg: "Not found." });
+// });
