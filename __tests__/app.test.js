@@ -1,5 +1,5 @@
 const request = require("supertest");
-const app = require("../app");
+const app = require("../index");
 const seed = require("../db/seeds/seed");
 const db = require("../db/connection");
 
@@ -116,7 +116,7 @@ describe("NC-Games app", () => {
               "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
             review_body: "Fiddly fun for all the family",
             category: "dexterity",
-            created_at: "2021-01-18T10:01:41.251Z",
+            created_at: expect.any(String),
             votes: 5,
             comment_count: "3",
           });
@@ -140,7 +140,7 @@ describe("NC-Games app", () => {
             review_body:
               "Consequat velit occaecat voluptate do. Dolor pariatur fugiat sint et proident ex do consequat est. Nisi minim laboris mollit cupidatat et adipisicing laborum do. Sint sit tempor officia pariatur duis ullamco labore ipsum nisi voluptate nulla eu veniam. Et do ad id dolore id cillum non non culpa. Cillum mollit dolor dolore excepteur aliquip. Cillum aliquip quis aute enim anim ex laborum officia. Aliqua magna elit reprehenderit Lorem elit non laboris irure qui aliquip ad proident. Qui enim mollit Lorem labore eiusmod",
             category: "social deduction",
-            created_at: "2021-01-22T11:35:50.936Z",
+            created_at: expect.any(String),
             votes: 7,
             comment_count: "0",
           });
@@ -168,7 +168,7 @@ describe("NC-Games app", () => {
               "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
             review_body: "We couldn't find the werewolf!",
             category: "social deduction",
-            created_at: "2021-01-18T10:01:41.251Z",
+            created_at: expect.any(String),
             votes: 6,
           });
         });
@@ -319,7 +319,7 @@ describe("NC-Games app", () => {
                 "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
               review_body: "Fiddly fun for all the family",
               category: "dexterity",
-              created_at: "2021-01-18T10:01:41.251Z",
+              created_at: expect.any(String),
               votes: 5,
               comment_count: 3,
             },

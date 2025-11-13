@@ -32,6 +32,18 @@ exports.insertComment = async (review_id, updates) => {
     [username]
   );
 
+  const checkReviewExists = await connection.query(
+    `SELECT * FROM reviews WHERE review_id=$1;`,
+    [review_id]
+  );
+
+  if (checkReviewExists.rows.length === 0) {
+    return Promise.reject({
+      status: 404,
+      msg: "Not found.",
+    });
+  }
+
   if (typeof username !== "string") {
     return Promise.reject({
       status: 400,
