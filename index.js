@@ -31,7 +31,12 @@ app.delete("/api/comments/:comment_id", deleteComment);
 app.get("/api", fetchEndpoints);
 
 app.use("*", (req, res) => {
-  res.status(404).send({ msg: "Not found." });
+  res.status(404).send({
+    message: "Belas Games API is running!",
+    status: "healthy",
+    to_see_all_endpoints_use: "/api",
+    github_repo: "https://github.com/B7Bprog/belas-games",
+  });
 });
 
 app.use((err, req, res, next) => {
@@ -40,33 +45,28 @@ app.use((err, req, res, next) => {
     (err.msg.startsWith("Order") || err.msg.startsWith("Sort_by"))
   ) {
     return res.status(400).send({ msg: err.msg });
-  }
-  else next(err);
-
+  } else next(err);
 });
 
-app.use((err, req,res, next)=>{
-if (err.hasOwnProperty("msg") && err.msg !== "Bad Request")
-    return res.status(404).send({msg: err.msg});
-  else next(err)
-})
-app.use((err, req,res, next)=>{
-    if (err.code === "22P02" || err.msg === "Bad Request") {
+app.use((err, req, res, next) => {
+  if (err.hasOwnProperty("msg") && err.msg !== "Bad Request")
+    return res.status(404).send({ msg: err.msg });
+  else next(err);
+});
+app.use((err, req, res, next) => {
+  if (err.code === "22P02" || err.msg === "Bad Request") {
     return res.status(400).send({ msg: "Bad Request" });
-    }
-    else next(err);
-})
-app.use((err, req,res, next)=>{
-  if(err.status === 404)
-  return res.status(404).send({ msg: "Not found." });
-  else next()
-})
+  } else next(err);
+});
+app.use((err, req, res, next) => {
+  if (err.status === 404) return res.status(404).send({ msg: "Not found." });
+  else next();
+});
 app.use((err, req, res, next) => {
   res.status(500).send({ msg: "Internal Server Error" });
 });
 
 module.exports = app;
-
 
 // app.use((err, req, res, next) => {
 //   if (
