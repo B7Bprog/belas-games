@@ -58,3 +58,15 @@ jobs:
           PGPORT: 5432
         run: npm test
       - run: npm run build --if-present
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to Vercel
+        uses: vercel/actions@v1
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-args: "--prod"
