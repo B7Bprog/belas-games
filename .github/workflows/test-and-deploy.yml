@@ -10,20 +10,51 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x]
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: ${{ secrets.PGDATABASE }}
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
 
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js 18
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 18.x
           cache: "npm"
       - run: npm ci
+      - name: Setup databases
+        env:
+          PGDATABASE: ${{ secrets.PGDATABASE }}
+          PGHOST: localhost
+          PGUSER: postgres
+          PGPASSWORD: postgres
+          PGPORT: 5432
+        run: npm run setup-dbs
+      - name: Seed database
+        env:
+          PGDATABASE: ${{ secrets.PGDATABASE }}
+          PGHOST: localhost
+          PGUSER: postgres
+          PGPASSWORD: postgres
+          PGPORT: 5432
+        run: npm run seed
       - name: Run tests
         env:
           PGDATABASE: ${{ secrets.PGDATABASE }}
+          PGHOST: localhost
+          PGUSER: postgres
+          PGPASSWORD: postgres
+          PGPORT: 5432
         run: npm test
       - run: npm run build --if-present
