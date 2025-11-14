@@ -1,12 +1,27 @@
 ## Welcome to Bela's games app
 
-- This is an api with reviews of games and comments that belong to certain reviews.
+- This is an API with reviews of games and comments that belong to certain reviews.
 
 - The client can request reviews by ID, do queries to sort reviews by a specified column, arrange sort order, and filter by category.
 
 - Client is able to increment/ decrement votes for certain reviews.
 
 - Comments can be added and deleted at reviews specified.
+
+---
+
+## CI/CD Pipeline
+
+This project features a complete CI/CD pipeline:
+
+- **Automated testing** on push and pull requests
+- **PostgreSQL integration** for database testing
+- **Automated deployments** to Vercel on main branch
+
+[![Tests](https://github.com/B7Bprog/belas-games/actions/workflows/test-and-deploy.yml/badge.svg)](https://github.com/B7Bprog/belas-games/actions)
+[![Deployments](https://img.shields.io/badge/Deployments-Vercel-blue)](https://belas-games.vercel.app/)
+
+---
 
 # How to use the app:
 
@@ -30,6 +45,6 @@
 
 # Using the hosted version
 
-- You can reach the deployed app at this address: https://belas-games.herokuapp.com/
+- You can reach the deployed app at this address: https://belas-games.vercel.app
 
 - To get a description of all the endpoints, use the following URL: https://belas-games.herokuapp.com/api
