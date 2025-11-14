@@ -47,4 +47,4 @@ This project features a complete CI/CD pipeline:
 
 - You can reach the deployed app at this address: https://belas-games.vercel.app
 
-- To get a description of all the endpoints, use the following URL: https://belas-games.herokuapp.com/api
+- To get a description of all the endpoints, use the following URL: https://belas-games.vercel.app/api
