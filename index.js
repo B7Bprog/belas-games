@@ -30,12 +30,18 @@ app.post("/api/reviews/:review_id/comments", postComment);
 app.delete("/api/comments/:comment_id", deleteComment);
 app.get("/api", fetchEndpoints);
 
-app.use("*", (req, res) => {
+app.get("/", (req, res) => {
   res.status(404).send({
     message: "Belas Games API is running!",
     status: "healthy",
     to_see_all_endpoints_use: "/api",
     github_repo: "https://github.com/B7Bprog/belas-games",
+  });
+});
+
+app.use("*", (req, res) => {
+  res.status(404).send({
+    msg: "Not found.",
   });
 });
 
